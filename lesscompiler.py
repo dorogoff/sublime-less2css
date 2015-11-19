@@ -223,7 +223,15 @@ class Compiler:
     #run compiler, catch an errors that might come up
     try:
       # not sure if node outputs on stderr or stdout so capture both
-      p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      #p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      startupinfo=None
+      if platform_name == 'Windows':
+      # this startupinfo structure prevents a console window from popping up on Windows
+      startupinfo = subprocess.STARTUPINFO()
+      startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+      # not sure if node outputs on stderr or stdout so capture both
+      p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
+
     except OSError as err:
       # an error has occured, stop processing the file any further
       return sublime.error_message('less2css error: ' + str(err))
